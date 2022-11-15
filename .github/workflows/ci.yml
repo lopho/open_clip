@@ -47,7 +47,8 @@ jobs:
       uses: actions/cache@v3
       with:
         path: .test_durations
-        key: test_durations
+        key: test_durations-${{ matrix.job }}-${{ github.run-id }}
+        restore-keys: test_durations-0-
     - name: Setup
       if: steps.venv-cache.outputs.cache-hit != 'true'
       run: |
@@ -76,19 +77,11 @@ jobs:
     needs: Tests
     runs-on: ubuntu-latest
     steps:
-    - name: Clear cache
-      run: |
-        gh extension install actions/gh-actions-cache
-        echo "${{ github.repository }}"
-        echo "${{ github.ref }}"
-        gh actions-cache delete "test_durations" -R ${{ github.repository }} -B ${{ github.ref }} --confirm
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Cache
       uses: actions/cache@v3
       with:
         path: .test_durations
-        key: test_durations
+        key: test_durations-0-${{ github.run-id }}
     - name: Collect
       uses: actions/download-artifact@v3
       with:
