@@ -1,5 +1,4 @@
 name: CI
-run-name: "${{ github.workflow }}: ${{ github.head_ref }}"
 
 on:
   push:
@@ -47,7 +46,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: .test_durations
-        key: test_durations-${{ matrix.job }}-${{ github.run-id }}
+        key: test_durations-${{ matrix.job }}-${{ github.run_id }}
         restore-keys: test_durations-0-
     - name: Setup
       if: steps.venv-cache.outputs.cache-hit != 'true'
@@ -81,7 +80,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: .test_durations
-        key: test_durations-0-${{ github.run-id }}
+        key: test_durations-0-${{ github.run_id }}
     - name: Collect
       uses: actions/download-artifact@v3
       with:
