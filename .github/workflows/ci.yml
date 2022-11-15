@@ -26,7 +26,7 @@ jobs:
   Tests:
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
+        os: [ ubuntu-latest ] #, macos-latest ]
         python: [ 3.8 ]
         job_num: [ 4 ]
         job: [ 1, 2, 3, 4 ]
@@ -75,19 +75,16 @@ jobs:
   Collect:
     needs: Tests
     runs-on: ubuntu-latest
-    permissions: write-all
     steps:
     - name: Clear cache
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const response = await github.rest.actions.deleteActionsCacheByKey({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            key: 'test_durations',
-          })
-          console.log(response)
-    - name: Initialize cache
+      run: |
+        gh extension install actions/gh-actions-cache
+        echo "${{ github.repository }}"
+        echo "${{ github.ref }}"
+        gh actions-cache delete "test_durations" -R ${{ github.repository }} -B ${{ github.ref }} --confirm
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Cache
       uses: actions/cache@v3
       with:
         path: .test_durations
