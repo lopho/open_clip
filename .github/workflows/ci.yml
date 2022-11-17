@@ -57,7 +57,7 @@ jobs:
       run: |
         if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
             py -m venv .env
-            .env\Scripts\activate.bat
+            .env\\Scripts\\activate.bat
         else
             python3 -m venv .env
             source .env/bin/activate
@@ -68,7 +68,7 @@ jobs:
     - name: Unit tests
       run: |
         if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            .env\Scripts\activate.bat
+            .env\\Scripts\\activate.bat
         else
             source .env/bin/activate
         fi
