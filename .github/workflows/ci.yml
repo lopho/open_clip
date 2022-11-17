@@ -43,6 +43,7 @@ jobs:
     - name: Venv cache
       id: venv-cache
       uses: actions/cache@v3
+      if: matrix.os != 'windows-latest'
       with:
         path: .env
         key: venv-${{ matrix.os }}-${{ matrix.python }}-${{ hashFiles('requirements*') }}
@@ -53,7 +54,7 @@ jobs:
         key: test_durations-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.job }}-${{ github.run_id }}
         restore-keys: test_durations-0-
     - name: Setup
-      if: steps.venv-cache.outputs.cache-hit != 'true'
+      if: steps.venv-cache.outputs.cache-hit != 'true' || matrix.os == 'windows-latest'
       run: |
         if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
             py -m venv .env
@@ -68,7 +69,6 @@ jobs:
     - name: Unit tests
       run: |
         if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            py -m venv .env
             .env\\Scripts\\activate.bat
         else
             source .env/bin/activate
