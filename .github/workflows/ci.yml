@@ -68,6 +68,7 @@ jobs:
     - name: Unit tests
       run: |
         if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+            py -m venv .env
             .env\\Scripts\\activate.bat
         else
             source .env/bin/activate
