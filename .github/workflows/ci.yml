@@ -63,6 +63,9 @@ jobs:
     - name: Setup
       if: steps.venv-cache.outputs.cache-hit != 'true'
       run: |
+        echo $OSTYPE
+        echo $OSTYPE
+        echo $OSTYPE
         source .env/bin/activate
         make install
         make install-test
