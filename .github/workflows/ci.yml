@@ -52,10 +52,17 @@ jobs:
         path: .test_durations
         key: test_durations-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.job }}-${{ github.run_id }}
         restore-keys: test_durations-0-
+    - name: Venv
+      if: steps.venv-cache.outputs.cache-hit != 'true' && matrix.os != 'windows-latest'
+      run: |
+        python3 -m venv .env
+    - name: Venv Windows
+      if: steps.venv-cache.outputs.cache-hit != 'true' && matrix.os == 'windows-latest'
+      run: |
+        py -m venv .env
     - name: Setup
       if: steps.venv-cache.outputs.cache-hit != 'true'
       run: |
-        python3 -m venv .env || py -m venv .env
         source .env/bin/activate
         make install
         make install-test
