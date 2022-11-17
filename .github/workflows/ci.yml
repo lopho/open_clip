@@ -21,11 +21,15 @@ on:
     - 'docs/**'
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   Tests:
     strategy:
       matrix:
-        os: [ ubuntu-latest ] #, macos-latest ]
+        os: [ windows-latest ]
         python: [ 3.8 ]
         job_num: [ 4 ]
         job: [ 1, 2, 3, 4 ]
@@ -51,7 +55,7 @@ jobs:
     - name: Setup
       if: steps.venv-cache.outputs.cache-hit != 'true'
       run: |
-        python3 -m venv .env
+        python3 -m venv .env || py -m venv .env
         source .env/bin/activate
         make install
         make install-test
