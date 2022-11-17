@@ -8,7 +8,7 @@ from training.main import main
 
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
-@pytest.mark.skipif(sys.platform.startswith('darwin'), reason="macos pickle bug with locals")
+@pytest.mark.skipif(sys.platform.startswith('darwin') or sys.platform.startswith('win'), reason="pickle bug with locals")
 def test_training():
     main([
     '--save-frequency', '1',
