@@ -35,6 +35,12 @@ jobs:
         job: [ 1, 2, 3, 4 ]
     runs-on: ${{ matrix.os }}
     steps:
+    - if: runner.os == 'Windows'
+      name: Use GNU tar
+      shell: cmd
+      run: |
+        echo "Adding GNU tar to PATH"
+        echo C:\Program Files\Git\usr\bin>>"%GITHUB_PATH%"
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python }}
       uses: actions/setup-python@v4
@@ -43,7 +49,6 @@ jobs:
     - name: Venv cache
       id: venv-cache
       uses: actions/cache@v3
-      if: matrix.os != 'windows-latest'
       with:
         path: .env
         key: venv-${{ matrix.os }}-${{ matrix.python }}-${{ hashFiles('requirements*') }}
@@ -54,9 +59,9 @@ jobs:
         key: test_durations-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.job }}-${{ github.run_id }}
         restore-keys: test_durations-0-
     - name: Setup
-      if: steps.venv-cache.outputs.cache-hit != 'true' || matrix.os == 'windows-latest'
+      if: steps.venv-cache.outputs.cache-hit != 'true'
       run: |
-        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+        if [[ "${{ runner.os }}" == "Windows" ]]; then
             py -m venv .env
             .env\\Scripts\\activate.bat
         else
@@ -68,7 +73,7 @@ jobs:
         make install-training
     - name: Unit tests
       run: |
-        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+        if [[ "${{ runner.os }}" == "Windows" ]]; then
             .env\\Scripts\\activate.bat
         else
             source .env/bin/activate
