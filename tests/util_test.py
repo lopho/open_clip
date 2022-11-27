@@ -8,9 +8,6 @@ import open_clip
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
-def is_gh_runner():
-    return 'IS_GH_RUNNER' in os.environ
-
 def seed_all(seed = 0):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
