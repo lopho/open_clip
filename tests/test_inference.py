@@ -7,8 +7,14 @@ import util_test
 
 os.environ['CUDA_VISIBLE_DEVICES'] = ''
 
+models_to_test = set(open_clip.list_models())
+
+if os.environ.get('IS_GH_RUNNER', '0') == '1':
+    with open(os.path.join(os.path.dirname(__file__), 'data', 'models_gh_runner.txt'), 'r') as f:
+        models_to_test = set(f.read().splitlines()).intersection(models_to_test)
+
 # testing excemptions
-models_to_test = list(set(open_clip.list_models()).difference({
+models_to_test = list(models_to_test.difference({
         # not available with timm yet
         # see https://github.com/mlfoundations/open_clip/issues/219
         'timm-convnext_xlarge',

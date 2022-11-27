@@ -161,7 +161,7 @@ def create_test_data(
             # see https://github.com/mlfoundations/open_clip/issues/219
             'timm-convnext_xlarge',
             'timm-vit_medium_patch16_gap_256'
-    }))
+    }).intersection(open_clip.list_models()))
     models.sort()
     print(f"generating test data for:\n{models}")
     for model_name in models:
