@@ -26,6 +26,7 @@ models_to_test = list(models_to_test.difference({
 }))
 models_to_test.sort()
 
+@pytest.mark.regression_test
 @pytest.mark.parametrize('model_name', models_to_test)
 def test_inference_with_data(
         model_name,
