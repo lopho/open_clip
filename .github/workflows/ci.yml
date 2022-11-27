@@ -54,6 +54,12 @@ jobs:
       with:
         path: .env
         key: venv-${{ matrix.os }}-${{ matrix.python }}-${{ hashFiles('requirements*') }}
+    - name: Pytest durations cache
+      uses: actions/cache@v3
+      with:
+        path: .test_durations
+        key: test_durations-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.job }}-${{ github.run_id }}
+        restore-keys: test_durations-0-
     - name: Setup
       if: steps.venv-cache.outputs.cache-hit != 'true'
       run: |
@@ -90,22 +96,30 @@ jobs:
         git reset --hard $CURRENT_GIT_REF
         rm -rf tests/data/*
         cp -r tests/data_ref/* tests/data
-    - name: Pytest durations cache
-      uses: actions/cache@v3
-      with:
-        path: .test_durations
-        key: test_durations-${{ matrix.os }}-${{ matrix.python }}-${{ matrix.job }}-${{ github.run_id }}
-        restore-keys: test_durations-0-
     - name: Unit tests
       run: |
         source .env/bin/activate
-        IS_GH_RUNNER=1 python -m pytest \
-          -x -s -v \
+        cp .test_durations durations_1
+        cp .test_durations durations_2
+        rm .test_durations
+        python -m pytest \
+          -x -v \
           --splitting-algorithm least_duration \
           --splits ${{ matrix.job_num }} \
           --group ${{ matrix.job }} \
           --store-durations \
+          --durations-path durations_1 \
+          --clean-durations \
+          -k "not inference_with_data" \
           tests
+        IS_GH_RUNNER=1 python -m pytest \
+          -x -v \
+          --store-durations \
+          --durations-path durations_2 \
+          --clean-durations \
+          -k "inference_with_data" \
+          tests
+        jq -s -S 'add' durations_* > .test_durations
     - name: Collect pytest durations
       uses: actions/upload-artifact@v3
       with:
@@ -130,4 +144,8 @@ jobs:
         jq -n -S \
           'reduce (inputs | to_entries[]) as {$key, $value} ({}; .[$key] += $value)' \
           artifacts/pytest_durations_*/.test_durations > .test_durations
+    - uses: actions/upload-artifact@v3
+      with:
+        name: pytest_durations
+        path: .test_durations
 
