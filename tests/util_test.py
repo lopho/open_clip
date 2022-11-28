@@ -239,10 +239,13 @@ def main(args):
         parser.print_help()
         parser.exit(1)
     if args.git_revision is not None:
-        assert os.system(f'git stash') == 0
+        _sytem_assert(f'git stash')
         current_branch = subprocess.check_output(
                 ['git', 'branch', '--show-current']
-        ).splitlines()[0].decode()
+        )
+        print(current_branch)
+        print(type(current_branch))
+        sys.exit(1)
         try:
             _sytem_assert(f'git checkout {args.git_revision}')
         except AssertionError as e:
