@@ -272,9 +272,9 @@ def main(args):
             _sytem_assert(f'git checkout {current_branch}')
             os.system(f'git stash pop') # returns 1 if nothing in stash
             os.rename(test_dir_ref, test_dir)
-    if args.save_model_file is not None:
-        print(f"Saving model list as {args.save_model_file}")
-        with open(args.save_model_file, 'w') as f:
+    if args.save_model_list is not None:
+        print(f"Saving model list as {args.save_model_list}")
+        with open(args.save_model_list, 'w') as f:
             for m in models:
                 print(m, file=f)
 
