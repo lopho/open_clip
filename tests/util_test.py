@@ -270,7 +270,7 @@ def main(args):
                 shutil.rmtree(test_dir_ref)
             os.rename(test_dir, test_dir_ref)
             _sytem_assert(f'git checkout {current_branch}')
-            _sytem_assert(f'git stash pop')
+            os.system(f'git stash pop') # returns 1 if nothing in stash
             os.rename(test_dir_ref, test_dir)
     if args.save_model_file is not None:
         print(f"Saving model list as {args.save_model_file}")
