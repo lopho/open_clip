@@ -243,9 +243,10 @@ def main(args):
         current_branch = subprocess.check_output(
                 ['git', 'branch', '--show-current']
         )
-        print(current_branch)
-        print(type(current_branch))
-        sys.exit(1)
+        if len(current_branch) < 1:
+            # not on a branch -> detached head
+            current_branch = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+        current_branch = current_branch.splitlines()[0].decode()
         try:
             _sytem_assert(f'git checkout {args.git_revision}')
         except AssertionError as e:
